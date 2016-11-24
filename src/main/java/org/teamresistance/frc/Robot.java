@@ -12,18 +12,17 @@ import timber.log.Timber;
  */
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 public class Robot extends IterativeRobot {
-
   @Inject TeleopDelegate teleop;
   @Inject AutoDelegate auto;
 
   @Override
   public void robotInit() {
     // Dagger is used to inject and resolve dependencies. Experimental.
-    DaggerRobotComponent.create().inject(this);
+    //DaggerRobotComponent.create().inject(this);
 
     // Register a logger (Tree) that prints messages to the console (i.e. DriverStation).
     // Log a message by invoking the static Timber methods, like "Timber.d(..)". Since
-    // all logging is through Timber, they can be silenced by not planting any trees.
+    // all logging is through Timber, it can be silenced by not planting any trees.
     Timber.plant(new Timber.Tree() {
       @Override
       protected void log(int priority, String tag, String message, Throwable t) {
