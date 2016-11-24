@@ -1,11 +1,16 @@
 buildscript {
+    ext.kotlin_version = "1.1-M02"
+
     repositories {
         mavenCentral()
         maven { url "http://dev.imjac.in/maven" }
+        maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1" }
     }
     dependencies {
         // Keep an eye on https://github.com/Open-RIO/GradleRIO/issues/11
         classpath "jaci.openrio.gradle:GradleRIO:4.4.3"
+        //noinspection DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -13,9 +18,9 @@ plugins {
     id 'java'
     id 'idea'
     id 'de.fuerstenau.buildconfig' version '1.1.7'
-    id "net.ltgt.apt" version "0.5"
 }
 
+apply plugin: 'kotlin'
 apply plugin: 'GradleRIO'
 
 group 'org.teamresistance.frc'
@@ -24,6 +29,7 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     maven { url "http://first.wpi.edu/FRC/roborio/maven/release" }
+    maven { url "https://dl.bintray.com/kotlin/kotlin-eap-1.1" }
 }
 
 dependencies {
@@ -35,18 +41,33 @@ dependencies {
     // NetworkTables!
     compile 'edu.wpi.first.wpilib.networktables.java:NetworkTables:3.1.1-beta-1'
 
+    // Kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    
     // Gradle (proper dependency management, replacement for IO.java)
     compile 'com.google.dagger:dagger:2.7'
-    apt 'com.google.dagger:dagger-compiler:2.7'
+    kapt 'com.google.dagger:dagger-compiler:2.7'
+
+    // JUnit 5 and assertions (unit testing)
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.0.0-M2'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M2'
+    testCompile 'org.assertj:assertj-core:3.5.2'
+
+    // RxJava (for the event bus)
+    compile 'io.reactivex.rxjava2:rxjava:2.0.0'
 }
 
-sourceSets {
-    main.java.srcDirs += 'build/gen/buildconfig/classes/main'
+kapt {
+    generateStubs = true
 }
 
 buildConfig {
     packageName = "${project.group}.buildconfig"
     buildConfigField 'String', 'AGENT', System.getenv("USERNAME") ?: 'Anonymous'
+}
+
+sourceSets {
+    main.java.srcDirs += 'build/gen/buildconfig/src/main'
 }
 
 gradlerio {
