@@ -11,7 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LiftinIndexUpTest {
   private MockMotor binLiftinMotor = Mock.stoppedMotor();
   private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
-  private LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftinMotor, hasIndexedSwitch);
+  private FakeLiftinWatcher liftinWatcher = new FakeLiftinWatcher();
+  private LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftinMotor, hasIndexedSwitch, liftinWatcher);
 
   @Test
   void whileExecuting_ShouldSetMotorOutput() {
@@ -19,6 +20,26 @@ class LiftinIndexUpTest {
     runner.step(0);
 
     assertThat(binLiftinMotor.getSpeed()).isNotZero();
+  }
+
+  @Test
+  void whileExecuting_WhenAtMaxIndex_ShouldFinish() {
+    liftinWatcher.setCurrentIndex(LiftinWatcher.MAX);
+
+    CommandTester runner = new CommandTester(liftinIndexUp);
+    boolean isFinished = runner.step(0);
+
+    assertThat(isFinished).isTrue();
+  }
+
+  @Test
+  void whileExecuting_WhenAtMaxIndex_ShouldNotSetMotorOutput() {
+    liftinWatcher.setCurrentIndex(LiftinWatcher.MAX);
+
+    CommandTester runner = new CommandTester(liftinIndexUp);
+    runner.step(0);
+
+    assertThat(binLiftinMotor.getSpeed()).isZero();
   }
 
   @Test
