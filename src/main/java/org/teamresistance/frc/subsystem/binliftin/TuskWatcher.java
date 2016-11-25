@@ -16,18 +16,19 @@ public interface TuskWatcher {
   int MAX_INDEX = 9;
 
   /**
-   * Returns the current position of tusks on the {@link BinLiftin}, where the position is
-   * the number of tusks forward. A position of 0 means the BinLifter is tucked away in its
-   * home position, while a position of {@link #MAX_INDEX} means it is fully extended.
+   * Returns the current position of tusks on the {@link BinLiftin}, where the position is the
+   * number of tusks forward. A position of 0 means the BinLifter is at the zero position, where
+   * the first tusk is peaking out from the bottom of the ladder. A position of -1 means it is
+   * tucked away in its home position. A position of {@link #MAX_INDEX} means all tusks are out.
    *
-   * @return the number of forward tusks; a number between 0 and {@link #MAX_INDEX}
+   * @return the number of forward tusks; a number from -1 to {@link #MAX_INDEX}
    */
   int getCurrentIndex();
 
   /**
    * Returns the number of physical totes the {@link BinLiftin} is currently bearing.
    *
-   * @return the number of totes held; a number between 0 and {@link #MAX_INDEX}
+   * @return the number of totes held; a number from 0 to {@link #MAX_INDEX}
    */
   int getCurrentToteCount();
 }

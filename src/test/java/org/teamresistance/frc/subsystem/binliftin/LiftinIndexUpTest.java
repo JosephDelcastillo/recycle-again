@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This is an integration test that tests the combined logic for both the {@link LiftinIndexUp}
- * command and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
- * been replaced with mocks (motors and sensors). The status of the command (e.g. continuing vs
+ * goHomeCommand and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
+ * been replaced with mocks (motors and sensors). The status of the goHomeCommand (e.g. continuing vs
  * finished) and the motor outputs are used as verification.
  *
  * @author Rothanak So
@@ -24,20 +24,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LiftinIndexUpTest {
   private MockMotor motor = Mock.stoppedMotor();
   private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
-  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atBottom();
+  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atZero();
 
   private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher);
   private LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftin, hasIndexedSwitch);
 
   @Test
-  void interrupt_ShouldStopMotor() {
+  void whenMotorRunning_interrupt_ShouldKillMotor() {
+    motor.setSpeed(1.0);
     CommandTester runner = new CommandTester(liftinIndexUp);
     CommandUtilities.interrupt(runner);
     assertThat(motor.getSpeed()).isZero();
   }
 
-  // Notice there is no test case for "finish_ShouldStopMotor". This is because is no way for
-  // us to manually finish a command. This is actually by design, as a command's final state
+  // Notice there is no test case for "finish_ShouldKillMotor". This is because is no way for
+  // us to manually finish a goHomeCommand. This is actually by design, as a goHomeCommand's final state
   // also depends on whatever happens in #execute, not just #stop. Thus, "finish" varies by
   // scenario too, so we test it within the scenarios wherever relevant.
 
@@ -47,6 +48,7 @@ class LiftinIndexUpTest {
     @BeforeEach
     void pretendAtTop() {
       liftinWatcher.setAtTop();
+      motor.setSpeed(1.0);
     }
 
     @Test
@@ -70,6 +72,7 @@ class LiftinIndexUpTest {
     @BeforeEach
     void pretendInMiddle() {
       liftinWatcher.setInMiddle();
+      motor.setSpeed(1.0);
     }
 
     @Test
@@ -111,7 +114,7 @@ class LiftinIndexUpTest {
       }
 
       @Test
-      void executing_ShouldStopMotor() {
+      void executing_ShouldKillMotor() {
         CommandTester runner = new CommandTester(liftinIndexUp);
         runner.step(0);
         assertThat(motor.getSpeed()).isZero();

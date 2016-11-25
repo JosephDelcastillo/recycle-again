@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This is an integration test that tests the combined logic for both the {@link LiftinIndexDown}
- * command and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
- * been replaced with mocks (motors and sensors). The status of the command (e.g. continuing vs
+ * goHomeCommand and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
+ * been replaced with mocks (motors and sensors). The status of the goHomeCommand (e.g. continuing vs
  * finished) and the motor outputs are used as verification.
  *
  * @author Rothanak So
@@ -24,24 +24,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LiftinIndexDownTest {
   private MockMotor motor = Mock.stoppedMotor();
   private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
-  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atBottom();
+  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atZero();
 
   private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher);
   private LiftinIndexDown liftinIndexDown = new LiftinIndexDown(binLiftin, hasIndexedSwitch);
 
   @Test
-  void interrupt_ShouldStopMotor() {
+  void whenMotorRunning_interrupt_ShouldKillMotor() {
+    motor.setSpeed(1.0);
     CommandTester runner = new CommandTester(liftinIndexDown);
     CommandUtilities.interrupt(runner);
     assertThat(motor.getSpeed()).isZero();
   }
 
   @Nested
-  class WhenAtBottom {
+  class WhenAtZero {
 
     @BeforeEach
-    void pretendAtBottom() {
-      liftinWatcher.setAtBottom();
+    void pretendAtZero() {
+      liftinWatcher.setAtZero();
+      motor.setSpeed(1.0);
     }
 
     @Test
@@ -52,7 +54,7 @@ class LiftinIndexDownTest {
     }
 
     @Test
-    void execute_ShouldStopMotor() {
+    void execute_ShouldKillMotor() {
       CommandTester runner = new CommandTester(liftinIndexDown);
       runner.step(0);
       assertThat(motor.getSpeed()).isZero();
@@ -60,11 +62,12 @@ class LiftinIndexDownTest {
   }
 
   @Nested
-  class WhenNotAtBottom {
+  class WhenNotAtZero {
 
     @BeforeEach
     void pretendInMiddle() {
       liftinWatcher.setInMiddle();
+      motor.setSpeed(1.0);
     }
 
     @Test
@@ -107,7 +110,7 @@ class LiftinIndexDownTest {
       }
 
       @Test
-      void executing_ShouldStopMotor() {
+      void executing_ShouldKillMotor() {
         CommandTester runner = new CommandTester(liftinIndexDown);
         runner.step(0);
         assertThat(motor.getSpeed()).isZero();

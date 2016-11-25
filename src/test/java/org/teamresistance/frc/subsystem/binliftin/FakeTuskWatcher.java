@@ -5,7 +5,7 @@ package org.teamresistance.frc.subsystem.binliftin;
  * into test objects. It is used to simulate specific preconditions for the unit tests.
  * For usage examples, refer to {@link LiftinIndexUpTest} and {@link BinLiftinTest}.
  * <p>
- * Create a new instance by calling {@link FakeTuskWatcher#atBottom()}. Then, the state of
+ * Create a new instance by calling {@link FakeTuskWatcher#atZero()}. Then, the state of
  * then object can be manipulated by invoking methods such as {@link #fillWithTotes()} and
  * {@link #setAtTop()} in accordance with the assumptions of the tests.
  *
@@ -22,9 +22,17 @@ public class FakeTuskWatcher implements TuskWatcher {
 
   /**
    * Creates a new instance of {@link FakeTuskWatcher} with the lifter placed at the
-   * bottommost position, holding no totes.
+   * home position, holding no totes.
    */
-  static FakeTuskWatcher atBottom() {
+  static FakeTuskWatcher atHome() {
+    return new FakeTuskWatcher(-1, 0);
+  }
+
+  /**
+   * Creates a new instance of {@link FakeTuskWatcher} with the lifter placed at the
+   * bottommost (zero) position, holding no totes.
+   */
+  static FakeTuskWatcher atZero() {
     return new FakeTuskWatcher(0, 0);
   }
 
@@ -56,7 +64,11 @@ public class FakeTuskWatcher implements TuskWatcher {
     this.currentIndex = MAX_INDEX - 1;
   }
 
-  void setAtBottom() {
+  void setAtZero() {
     this.currentIndex = 0;
+  }
+
+  void setAtHome() {
+    this.currentIndex = -1;
   }
 }
