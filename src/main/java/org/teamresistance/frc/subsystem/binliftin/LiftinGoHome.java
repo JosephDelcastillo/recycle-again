@@ -1,22 +1,23 @@
 package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
-import org.strongback.components.Switch;
+
+import java.util.function.BooleanSupplier;
 
 public class LiftinGoHome extends Command {
   private final BinLiftin binLiftin;
-  private final Switch atHomeSwitch;
+  private final BooleanSupplier isAtHome;
 
-  LiftinGoHome(BinLiftin binLiftin, Switch atHomeSwitch) {
+  LiftinGoHome(BinLiftin binLiftin, BooleanSupplier isAtHome) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.atHomeSwitch = atHomeSwitch;
+    this.isAtHome = isAtHome;
   }
 
   @Override
   public boolean execute() {
-    binLiftin.safeGoHome();
-    return atHomeSwitch.isTriggered();
+    binLiftin.unsafeGoHome();
+    return isAtHome.getAsBoolean();
   }
 
   @Override

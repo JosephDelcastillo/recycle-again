@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.strongback.command.CommandTester;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
-import org.strongback.mock.MockSwitch;
 import org.teamresistance.frc.util.CommandUtilities;
+import org.teamresistance.frc.util.FakeBooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This is an integration test that tests the combined logic for both the {@link LiftinIndexUp}
- * goHomeCommand and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
- * been replaced with mocks (motors and sensors). The status of the goHomeCommand (e.g. continuing vs
+ * command and the {@link BinLiftin} subsystem. Only the hardware-based inputs and outputs have
+ * been replaced with mocks (motors and sensors). The status of the command (e.g. continuing vs
  * finished) and the motor outputs are used as verification.
  *
  * @author Rothanak So
@@ -22,12 +22,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @see LiftinIndexDownTest
  */
 class LiftinIndexUpTest {
-  private MockMotor motor = Mock.stoppedMotor();
-  private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
-  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atZero();
+  private final FakeBooleanSupplier isAtTop = new FakeBooleanSupplier(false);
+  private final FakeBooleanSupplier hasIndexed = new FakeBooleanSupplier(false);
+  private final MockMotor motor = Mock.stoppedMotor();
 
-  private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher);
-  private LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftin, hasIndexedSwitch);
+  private final BinLiftin binLiftin = new BinLiftin(motor, FakeTuskWatcher.atHome());
+  private final LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftin, isAtTop, hasIndexed);
 
   @Test
   void whenMotorRunning_interrupt_ShouldKillMotor() {
@@ -38,7 +38,7 @@ class LiftinIndexUpTest {
   }
 
   // Notice there is no test case for "finish_ShouldKillMotor". This is because is no way for
-  // us to manually finish a goHomeCommand. This is actually by design, as a goHomeCommand's final state
+  // us to manually finish a command. This is actually by design, as a command's final state
   // also depends on whatever happens in #execute, not just #stop. Thus, "finish" varies by
   // scenario too, so we test it within the scenarios wherever relevant.
 
@@ -47,7 +47,7 @@ class LiftinIndexUpTest {
 
     @BeforeEach
     void pretendAtTop() {
-      liftinWatcher.setAtTop();
+      isAtTop.setValue(true);
       motor.setSpeed(1.0);
     }
 
@@ -59,7 +59,7 @@ class LiftinIndexUpTest {
     }
 
     @Test
-    void execute_ShouldNotMoveMotor() {
+    void execute_ShouldKillMotor() {
       CommandTester runner = new CommandTester(liftinIndexUp);
       runner.step(0);
       assertThat(motor.getSpeed()).isZero();
@@ -71,23 +71,16 @@ class LiftinIndexUpTest {
 
     @BeforeEach
     void pretendInMiddle() {
-      liftinWatcher.setInMiddle();
+      isAtTop.setValue(false);
       motor.setSpeed(1.0);
     }
 
-    @Test
-    void execute_ShouldMoveMotorForward() {
-      CommandTester runner = new CommandTester(liftinIndexUp);
-      runner.step(0);
-      assertThat(motor.getSpeed()).isGreaterThan(0);
-    }
-
     @Nested
-    class WhenLimitIsNotPressed {
+    class WhenStillIndexing {
 
       @BeforeEach
-      void setLimitNotPressed() {
-        hasIndexedSwitch.setNotTriggered();
+      void setStillIndexing() {
+        hasIndexed.setValue(false);
       }
 
       @Test
@@ -96,14 +89,21 @@ class LiftinIndexUpTest {
         boolean isFinished = runner.step(0);
         assertThat(isFinished).isFalse();
       }
+
+      @Test
+      void execute_ShouldMoveMotorForward() {
+        CommandTester runner = new CommandTester(liftinIndexUp);
+        runner.step(0);
+        assertThat(motor.getSpeed()).isPositive();
+      }
     }
 
     @Nested
-    class WhenLimitIsPressed {
+    class WhenHasIndexed {
 
       @BeforeEach
-      void pressLimit() {
-        hasIndexedSwitch.setTriggered();
+      void setHasIndexed() {
+        hasIndexed.setValue(true);
       }
 
       @Test

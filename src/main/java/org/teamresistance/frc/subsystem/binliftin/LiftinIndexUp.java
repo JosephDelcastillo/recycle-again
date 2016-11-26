@@ -1,7 +1,8 @@
 package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
-import org.strongback.components.Switch;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Also known as "pickup", this command will lower the {@link BinLiftin} exactly one unit.
@@ -16,22 +17,25 @@ import org.strongback.components.Switch;
  * has finished. Spam the trigger as desired.
  *
  * @author Rothanak So
- * @see BinLiftin#safeIndexUp()
+ * @see BinLiftin#unsafeIndexUp()
  * @see BinLiftin#hold()
  */
 public class LiftinIndexUp extends Command {
   private final BinLiftin binLiftin;
-  private final Switch hasIndexedSwitch;
+  private final BooleanSupplier isAtTop;
+  private final BooleanSupplier hasIndexed;
 
-  LiftinIndexUp(BinLiftin binLiftin, Switch hasIndexedSwitch) {
+  LiftinIndexUp(BinLiftin binLiftin, BooleanSupplier isAtTop, BooleanSupplier hasIndexed) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.hasIndexedSwitch = hasIndexedSwitch;
+    this.isAtTop = isAtTop;
+    this.hasIndexed = hasIndexed;
   }
 
   @Override
   public boolean execute() {
-    return binLiftin.safeIndexUp() || hasIndexedSwitch.isTriggered();
+    binLiftin.unsafeIndexUp();
+    return isAtTop.getAsBoolean() || hasIndexed.getAsBoolean();
   }
 
   @Override

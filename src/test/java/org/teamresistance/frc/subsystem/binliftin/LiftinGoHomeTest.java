@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.strongback.command.CommandTester;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
-import org.strongback.mock.MockSwitch;
 import org.teamresistance.frc.util.CommandUtilities;
+import org.teamresistance.frc.util.FakeBooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,11 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @see LiftinIndexUpTest
  */
 class LiftinGoHomeTest {
+  private final FakeBooleanSupplier isAtHome = new FakeBooleanSupplier(false);
   private final MockMotor motor = Mock.stoppedMotor();
-  private final MockSwitch atHomeSwitch = Mock.notTriggeredSwitch();
-  private final FakeTuskWatcher tuskWatcher = FakeTuskWatcher.atZero();
-  private final BinLiftin binLiftin = new BinLiftin(motor, tuskWatcher);
-  private final LiftinGoHome goHomeCommand = new LiftinGoHome(binLiftin, atHomeSwitch);
+
+  private final BinLiftin binLiftin = new BinLiftin(motor, FakeTuskWatcher.atZero());
+  private final LiftinGoHome goHomeCommand = new LiftinGoHome(binLiftin, isAtHome);
 
   @Test
   void whenMotorRunning_Interrupt_ShouldKillMotor() {
@@ -35,12 +35,12 @@ class LiftinGoHomeTest {
   }
 
   @Nested
-  class WhenLimitHit {
+  class WhenReachedHome {
 
     @BeforeEach
-    void hitLimit() {
+    void reachHome() {
+      isAtHome.setValue(true);
       motor.setSpeed(1.0);
-      atHomeSwitch.setTriggered();
     }
 
     @Test
@@ -59,12 +59,12 @@ class LiftinGoHomeTest {
   }
 
   @Nested
-  class WhenLimitNotYetHit {
+  class WhenAwayFromHome {
 
     @BeforeEach
-    void doNotHitLimit() {
+    void awayFromHome() {
+      isAtHome.setValue(false);
       motor.setSpeed(1.0);
-      atHomeSwitch.setNotTriggered();
     }
 
     @Test

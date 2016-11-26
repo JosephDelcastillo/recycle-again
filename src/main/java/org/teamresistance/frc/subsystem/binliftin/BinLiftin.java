@@ -19,48 +19,19 @@ class BinLiftin implements Requirable {
     this.tuskWatcher = tuskWatcher;
   }
 
-  boolean safeIndexUp() {
-    if (isAtTop()) {
-      hold();
-      return true;
-    }
-
+  void unsafeIndexUp() {
     binLiftinMotor.setSpeed(INDEX_SPEED);
-    return false;
   }
 
-  boolean safeIndexDown() {
-    if (isAtZero()) {
-      hold();
-      return true;
-    }
-
+  void unsafeIndexDown() {
     binLiftinMotor.setSpeed(-1 * INDEX_SPEED);
-    return false;
   }
 
-  void safeGoHome() {
-    if (isAtHome()) {
-      hold();
-      return;
-    }
-
+  void unsafeGoHome() {
     binLiftinMotor.setSpeed(-1 * HOME_SPEED);
   }
 
   void hold() {
     binLiftinMotor.setSpeed(HOLD_SPEEDS[tuskWatcher.getCurrentToteCount()]);
-  }
-
-  private boolean isAtTop() {
-    return tuskWatcher.getCurrentIndex() == TuskWatcher.MAX_INDEX;
-  }
-
-  private boolean isAtZero() {
-    return tuskWatcher.getCurrentIndex() == 0;
-  }
-
-  private boolean isAtHome() {
-    return tuskWatcher.getCurrentIndex() == -1;
   }
 }

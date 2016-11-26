@@ -1,7 +1,8 @@
 package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
-import org.strongback.mock.MockSwitch;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Also known as "set down", this command will lower the {@link BinLiftin} exactly one unit.
@@ -16,22 +17,25 @@ import org.strongback.mock.MockSwitch;
  * has finished. Spam the trigger as desired.
  *
  * @author Rothanak So
- * @see BinLiftin#safeIndexDown()
+ * @see BinLiftin#unsafeIndexDown()
  * @see BinLiftin#hold()
  */
 public class LiftinIndexDown extends Command {
   private final BinLiftin binLiftin;
-  private final MockSwitch hasIndexedSwitch;
+  private final BooleanSupplier isAtZero;
+  private final BooleanSupplier hasIndexed;
 
-  LiftinIndexDown(BinLiftin binLiftin, MockSwitch hasIndexedSwitch) {
+  LiftinIndexDown(BinLiftin binLiftin, BooleanSupplier isAtZero, BooleanSupplier hasIndexed) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.hasIndexedSwitch = hasIndexedSwitch;
+    this.isAtZero = isAtZero;
+    this.hasIndexed = hasIndexed;
   }
 
   @Override
   public boolean execute() {
-    return binLiftin.safeIndexDown()|| hasIndexedSwitch.isTriggered();
+    binLiftin.unsafeIndexDown();
+    return isAtZero.getAsBoolean() || hasIndexed.getAsBoolean();
   }
 
   @Override

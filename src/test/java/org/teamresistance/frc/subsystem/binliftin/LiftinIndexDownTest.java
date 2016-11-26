@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.strongback.command.CommandTester;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
-import org.strongback.mock.MockSwitch;
 import org.teamresistance.frc.util.CommandUtilities;
+import org.teamresistance.frc.util.FakeBooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This is an integration test that tests the combined logic for both the {@link LiftinIndexDown}
- * goHomeCommand and the {@link BinLiftin} subsystem. Only the hardware-based inputs and ouputs have
- * been replaced with mocks (motors and sensors). The status of the goHomeCommand (e.g. continuing vs
+ * command and the {@link BinLiftin} subsystem. Only the hardware-based inputs and outputs have
+ * been replaced with mocks (motors and sensors). The status of the command (e.g. continuing vs
  * finished) and the motor outputs are used as verification.
  *
  * @author Rothanak So
@@ -22,12 +22,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @see LiftinIndexUpTest
  */
 class LiftinIndexDownTest {
-  private MockMotor motor = Mock.stoppedMotor();
-  private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
-  private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atZero();
+  private final FakeBooleanSupplier isAtZero = new FakeBooleanSupplier(false);
+  private final FakeBooleanSupplier hasIndexed = new FakeBooleanSupplier(false);
+  private final MockMotor motor = Mock.stoppedMotor();
 
-  private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher);
-  private LiftinIndexDown liftinIndexDown = new LiftinIndexDown(binLiftin, hasIndexedSwitch);
+  private BinLiftin binLiftin = new BinLiftin(motor, FakeTuskWatcher.atZero());
+  private LiftinIndexDown liftinIndexDown = new LiftinIndexDown(binLiftin, isAtZero, hasIndexed);
 
   @Test
   void whenMotorRunning_interrupt_ShouldKillMotor() {
@@ -42,7 +42,7 @@ class LiftinIndexDownTest {
 
     @BeforeEach
     void pretendAtZero() {
-      liftinWatcher.setAtZero();
+      isAtZero.setValue(true);
       motor.setSpeed(1.0);
     }
 
@@ -66,24 +66,16 @@ class LiftinIndexDownTest {
 
     @BeforeEach
     void pretendInMiddle() {
-      liftinWatcher.setInMiddle();
+      isAtZero.setValue(false);
       motor.setSpeed(1.0);
     }
 
-    @Test
-    void execute_ShouldMoveMotorBackward() {
-      CommandTester runner = new CommandTester(liftinIndexDown);
-      runner.step(0);
-      assertThat(motor.getSpeed()).isNegative();
-    }
-
-
     @Nested
-    class WhenLimitIsNotPressed {
+    class WhenStillIndexing {
 
       @BeforeEach
-      void setLimitNotPressed() {
-        hasIndexedSwitch.setNotTriggered();
+      void setStillIndexing() {
+        hasIndexed.setValue(false);
       }
 
       @Test
@@ -92,14 +84,21 @@ class LiftinIndexDownTest {
         boolean isFinished = runner.step(0);
         assertThat(isFinished).isFalse();
       }
+
+      @Test
+      void execute_ShouldMoveMotorBackward() {
+        CommandTester runner = new CommandTester(liftinIndexDown);
+        runner.step(0);
+        assertThat(motor.getSpeed()).isNegative();
+      }
     }
 
     @Nested
-    class WhenLimitIsPressed {
+    class WhenHasIndexed {
 
       @BeforeEach
       void pressLimit() {
-        hasIndexedSwitch.setTriggered();
+        hasIndexed.setValue(true);
       }
 
       @Test
