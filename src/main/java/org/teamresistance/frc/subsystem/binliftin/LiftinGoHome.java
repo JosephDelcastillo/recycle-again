@@ -22,7 +22,7 @@ public class LiftinGoHome extends Command {
 
   @Override
   public void interrupted() {
-    binLiftin.hold();
+    this.end();
   }
 
   @Override

@@ -45,6 +45,18 @@ class BinLiftinTest {
     assertThat(motor.getSpeed()).isNegative();
   }
 
+  @Test
+  void unsafeZeroFromAhead_ShouldMoveMotorBackward() {
+    binLiftin.unsafeZeroFromAhead();
+    assertThat(motor.getSpeed()).isNegative();
+  }
+
+  @Test
+  void unsafeZeroFromBehind_ShouldMoveMotorForward() {
+    binLiftin.unsafeZeroFromBehind();
+    assertThat(motor.getSpeed()).isPositive();
+  }
+
   @Nested
   class WhenNotHoldingTotes {
 

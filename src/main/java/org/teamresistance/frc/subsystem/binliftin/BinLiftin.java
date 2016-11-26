@@ -36,6 +36,14 @@ class BinLiftin implements Requirable {
     binLiftinMotor.setSpeed(-1 * UNLOAD_SPEED);
   }
 
+  void unsafeZeroFromAhead() {
+    binLiftinMotor.setSpeed(-1 * HOME_SPEED);
+  }
+
+  void unsafeZeroFromBehind() {
+    binLiftinMotor.setSpeed(HOME_SPEED);
+  }
+
   void hold() {
     binLiftinMotor.setSpeed(HOLD_SPEEDS[tuskWatcher.getCurrentToteCount()]);
   }
