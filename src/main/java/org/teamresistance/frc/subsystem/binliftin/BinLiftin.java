@@ -7,6 +7,7 @@ import org.strongback.components.Motor;
 class BinLiftin implements Requirable {
   private static final double INDEX_SPEED = 0.75;
   private static final double HOME_SPEED = 0.50;
+  private static final double UNLOAD_SPEED = 0.50;
   private static final double[] HOLD_SPEEDS = {
       0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2
   };
@@ -29,6 +30,10 @@ class BinLiftin implements Requirable {
 
   void unsafeGoHome() {
     binLiftinMotor.setSpeed(-1 * HOME_SPEED);
+  }
+
+  void unsafeUnload() {
+    binLiftinMotor.setSpeed(-1 * UNLOAD_SPEED);
   }
 
   void hold() {

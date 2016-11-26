@@ -12,8 +12,8 @@ import org.teamresistance.frc.util.FakeBooleanSupplier;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration test that verifies the logic for the {@link LiftinGoHome} command with a
- * real {@link BinLiftin} instance. All other collaborators (sensors, motors) are mocked.
+ * This is an integration test that verifies the logic for the {@link LiftinGoHome} command with
+ * a real {@link BinLiftin} instance. All other dependencies (sensors, motors) are mocked.
  *
  * @author Rothanak So
  * @see BinLiftinTest
