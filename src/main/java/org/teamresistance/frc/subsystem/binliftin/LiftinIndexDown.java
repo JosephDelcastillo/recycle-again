@@ -6,10 +6,8 @@ import java.util.function.BooleanSupplier;
 
 /**
  * Also known as "set down", this command will lower the {@link BinLiftin} exactly one unit.
- * Once done, it will hold the BinLiftin at the new index.
- * <p>
- * If the BinLiftin is already at the bottom according to the {@link TuskWatcher} sensor,
- * the command will abort. The bottommost index is defined as 0.
+ * Once done, it will hold the BinLiftin at the new index. If the BinLiftin is at the zero
+ * position, the command will abort.
  * <p>
  * If you call this command again before it has finished, Strongback will <b>not</b> queue
  * another indexing; a new instance will take precedence over the current one. To index

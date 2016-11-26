@@ -5,11 +5,9 @@ import org.strongback.command.Command;
 import java.util.function.BooleanSupplier;
 
 /**
- * Also known as "pickup", this command will lower the {@link BinLiftin} exactly one unit.
- * Once done, it will hold the BinLiftin at the new index.
- * <p>
- * If the BinLiftin is already at the top according to the {@link TuskWatcher} sensor,
- * the command will abort. The topmost index is defined by {@link TuskWatcher#MAX_INDEX}.
+ * Also known as "pickup", this command will raise the {@link BinLiftin} exactly one unit.
+ * Once done, it will hold the BinLiftin at the new index. If the BinLiftin is already at
+ * the top, the command will abort.
  * <p>
  * If you call this command again before it has finished, Strongback will <b>not</b> queue
  * another indexing; a new instance will take precedence over the current one. To index
