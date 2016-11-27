@@ -21,7 +21,7 @@ import java.util.function.BooleanSupplier;
  * @see BinLiftin#unsafeUnload()
  * @see BinLiftin#hold()
  */
-public class LiftinUnloadAll extends Command {
+class LiftinUnloadAll extends Command {
   private static final int UNLOAD_TIMEOUT_SECONDS = 10;
 
   private final BinLiftin binLiftin;

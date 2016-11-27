@@ -19,7 +19,7 @@ import org.strongback.command.Command;
  * @see BinLiftin#hold()
  */
 @Experimental
-public class LiftinZero extends Command {
+class LiftinZero extends Command {
   private final BinLiftin binLiftin;
   private final TuskWatcher tuskWatcher;
 

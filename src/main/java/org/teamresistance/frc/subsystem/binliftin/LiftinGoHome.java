@@ -17,7 +17,7 @@ import java.util.function.BooleanSupplier;
  * @see BinLiftin#unsafeGoHome()
  * @see BinLiftin#hold()
  */
-public class LiftinGoHome extends Command {
+class LiftinGoHome extends Command {
   private final BinLiftin binLiftin;
   private final BooleanSupplier isAtHome;
 

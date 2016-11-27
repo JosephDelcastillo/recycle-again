@@ -1,13 +1,20 @@
 package org.teamresistance.frc;
 
-import edu.wpi.first.wpilibj.SPI;
 import org.strongback.components.DistanceSensor;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
 import org.strongback.components.ui.ContinuousRange;
 import org.strongback.components.ui.FlightStick;
 import org.strongback.drive.MecanumDrive;
-import org.strongback.hardware.Hardware.*;
+import org.strongback.hardware.Hardware.DistanceSensors;
+import org.strongback.hardware.Hardware.HumanInterfaceDevices;
+import org.strongback.hardware.Hardware.Motors;
+import org.strongback.hardware.Hardware.Switches;
+import org.teamresistance.frc.device.CoDriverBox;
+import org.teamresistance.frc.subsystem.binliftin.BinLiftin;
+import org.teamresistance.frc.subsystem.binliftin.TuskWatcher;
+
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * Created by shrey on 11/20/2016.
@@ -55,7 +62,22 @@ public class IO {
             Constants.ARM_POT_SCALE,
             Constants.ARM_POT_OFFSET);
 
+  static final CoDriverBox coDriverBox = new CoDriverBox(2);
 
+  // BinLiftin
+  private static final Motor binLiftinMotor = Motors.victorSP(7);
+  private static final Switch indexerLimitSwitch = Switches.normallyOpen(3);
+  private static final TuskWatcher tuskWatcher = new TuskWatcher() {
+    @Override
+    public int getCurrentIndex() {
+      throw new UnsupportedOperationException();
+    }
 
+    @Override
+    public int getCurrentToteCount() {
+      throw new UnsupportedOperationException();
+    }
+  };
+  static final BinLiftin binLiftin = new BinLiftin(binLiftinMotor, tuskWatcher, indexerLimitSwitch);
 
 }

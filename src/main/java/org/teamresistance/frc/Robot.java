@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 //    IO class shouldn't be referenced anywhere but
 
 public class Robot extends IterativeRobot {
+    private final RobotDelegate teleopDelegate =
+        new TeleopDelegate(IO.coDriverBox, Strongback.switchReactor(), IO.binLiftin);
 
     Drive drive;
 
@@ -28,7 +30,7 @@ public class Robot extends IterativeRobot {
 
         Strongback.configure().recordNoEvents().recordNoData().initialize();
         drive = new Drive(IO.robotDrive);
-
+        teleopDelegate.robotInit();
     }
 
     @Override
@@ -43,12 +45,13 @@ public class Robot extends IterativeRobot {
 
     @Override
     public void teleopInit() {
-
+        teleopDelegate.onInit();
     }
 
     @Override
     public void teleopPeriodic() {
         drive.update(IO.translateXSpeed, IO.translateYSpeed, IO.gyro);
+        teleopDelegate.onPeriodic();
     }
 
     @Override
@@ -56,6 +59,7 @@ public class Robot extends IterativeRobot {
         // stop every subsystem
         drive.stop();
         Strongback.disable();
+        teleopDelegate.onDisabled();
     }
 
 

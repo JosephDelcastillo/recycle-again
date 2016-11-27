@@ -18,7 +18,7 @@ import java.util.function.BooleanSupplier;
  * @see BinLiftin#unsafeIndexUp()
  * @see BinLiftin#hold()
  */
-public class LiftinIndexUp extends Command {
+class LiftinIndexUp extends Command {
   private final BinLiftin binLiftin;
   private final BooleanSupplier isAtTop;
   private final BooleanSupplier hasIndexed;
