@@ -1,5 +1,7 @@
 package org.teamresistance.frc.subsystem.binliftin;
 
+import org.teamresistance.frc.sensor.TuskWatcher;
+
 /**
  * This is an in-memory implementation of TuskWatcher that gets injected as a dependency
  * into test objects. It is used to simulate specific preconditions for the unit tests.

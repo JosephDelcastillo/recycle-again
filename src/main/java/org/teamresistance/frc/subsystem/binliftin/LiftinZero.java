@@ -2,6 +2,7 @@ package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.annotation.Experimental;
 import org.strongback.command.Command;
+import org.teamresistance.frc.sensor.TuskWatcher;
 
 /**
  * This command will move the {@link BinLiftin} to the zero position from wherever it is. The

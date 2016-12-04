@@ -30,6 +30,11 @@ public class Robot extends IterativeRobot {
 
         Strongback.configure().recordNoEvents().recordNoData().initialize();
         drive = new Drive(IO.robotDrive);
+
+        // Bind the limit switch to the TuskWatcher and register it with Strongback's logger
+        Strongback.switchReactor().onTriggered(IO.indexerLimit, IO.tuskWatcher::onIndexed);
+        Strongback.dataRecorder().register("TuskWatcher", IO.tuskWatcher);
+
         teleopDelegate.robotInit();
     }
 

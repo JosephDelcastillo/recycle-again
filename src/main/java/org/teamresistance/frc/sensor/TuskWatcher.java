@@ -1,4 +1,6 @@
-package org.teamresistance.frc.subsystem.binliftin;
+package org.teamresistance.frc.sensor;
+
+import org.teamresistance.frc.subsystem.binliftin.BinLiftin;
 
 /**
  * A TuskWatcher is used to determine the current state of the {@link BinLiftin} machine
@@ -7,6 +9,7 @@ package org.teamresistance.frc.subsystem.binliftin;
  * of sensors and heuristics.
  *
  * @author Rothanak So
+ * @see CountingTuskWatcher
  */
 public interface TuskWatcher {
   /**

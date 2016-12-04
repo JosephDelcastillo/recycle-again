@@ -1,6 +1,7 @@
 package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
+import org.teamresistance.frc.sensor.TuskWatcher;
 
 /**
  * This command will reel the {@link BinLiftin} backwards to unload any totes in the process.

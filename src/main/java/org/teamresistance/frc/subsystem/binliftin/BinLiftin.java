@@ -5,6 +5,7 @@ import com.sun.istack.internal.NotNull;
 import org.strongback.command.Requirable;
 import org.strongback.components.Motor;
 import org.strongback.components.Switch;
+import org.teamresistance.frc.sensor.TuskWatcher;
 
 /**
  * The BinLiftin is a chain-driven mechanism built to lift and carry up to 6(?) totes. It is

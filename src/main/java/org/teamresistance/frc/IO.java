@@ -11,8 +11,8 @@ import org.strongback.hardware.Hardware.HumanInterfaceDevices;
 import org.strongback.hardware.Hardware.Motors;
 import org.strongback.hardware.Hardware.Switches;
 import org.teamresistance.frc.device.CoDriverBox;
+import org.teamresistance.frc.sensor.CountingTuskWatcher;
 import org.teamresistance.frc.subsystem.binliftin.BinLiftin;
-import org.teamresistance.frc.subsystem.binliftin.TuskWatcher;
 
 import edu.wpi.first.wpilibj.SPI;
 
@@ -66,18 +66,8 @@ public class IO {
 
   // BinLiftin
   private static final Motor binLiftinMotor = Motors.victorSP(7);
-  private static final Switch indexerLimit = Switches.normallyOpen(3);
-  private static final TuskWatcher tuskWatcher = new TuskWatcher() {
-    @Override
-    public int getCurrentIndex() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getCurrentToteCount() {
-      throw new UnsupportedOperationException();
-    }
-  };
+  static final Switch indexerLimit = Switches.normallyOpen(3);
+  static final CountingTuskWatcher tuskWatcher = new CountingTuskWatcher(binLiftinMotor);
   static final BinLiftin binLiftin = new BinLiftin(binLiftinMotor, tuskWatcher, indexerLimit);
 
 }
