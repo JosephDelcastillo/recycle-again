@@ -2,8 +2,6 @@ package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
 
-import java.util.function.BooleanSupplier;
-
 /**
  * Also known as "set down", this command will lower the {@link BinLiftin} exactly one unit.
  * Once done, it will hold the BinLiftin at the new index. If the BinLiftin is at the zero
@@ -15,25 +13,21 @@ import java.util.function.BooleanSupplier;
  * has finished. Spam the trigger as desired.
  *
  * @author Rothanak So
- * @see BinLiftin#unsafeIndexDown()
+ * @see BinLiftin#indexDown()
  * @see BinLiftin#hold()
  */
-class LiftinIndexDown extends Command {
+public class LiftinIndexDown extends Command {
   private final BinLiftin binLiftin;
-  private final BooleanSupplier isAtZero;
-  private final BooleanSupplier hasIndexed;
 
-  LiftinIndexDown(BinLiftin binLiftin, BooleanSupplier isAtZero, BooleanSupplier hasIndexed) {
+  public LiftinIndexDown(BinLiftin binLiftin) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.isAtZero = isAtZero;
-    this.hasIndexed = hasIndexed;
   }
 
   @Override
   public boolean execute() {
-    binLiftin.unsafeIndexDown();
-    return isAtZero.getAsBoolean() || hasIndexed.getAsBoolean();
+    binLiftin.indexDown();
+    return binLiftin.isAtZero() || binLiftin.hasIndexed();
   }
 
   @Override

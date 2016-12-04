@@ -31,4 +31,16 @@ public interface TuskWatcher {
    * @return the number of totes held; a number from 0 to {@link #MAX_INDEX}
    */
   int getCurrentToteCount();
+
+  default boolean isAtTop() {
+    return getCurrentIndex() == MAX_INDEX;
+  }
+
+  default boolean isAtZero() {
+    return getCurrentIndex() == 0;
+  }
+
+  default boolean isAtHome() {
+    return getCurrentIndex() == -1;
+  }
 }

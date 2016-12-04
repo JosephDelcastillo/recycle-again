@@ -66,7 +66,7 @@ public class IO {
 
   // BinLiftin
   private static final Motor binLiftinMotor = Motors.victorSP(7);
-  private static final Switch indexerLimitSwitch = Switches.normallyOpen(3);
+  private static final Switch indexerLimit = Switches.normallyOpen(3);
   private static final TuskWatcher tuskWatcher = new TuskWatcher() {
     @Override
     public int getCurrentIndex() {
@@ -78,6 +78,6 @@ public class IO {
       throw new UnsupportedOperationException();
     }
   };
-  static final BinLiftin binLiftin = new BinLiftin(binLiftinMotor, tuskWatcher, indexerLimitSwitch);
+  static final BinLiftin binLiftin = new BinLiftin(binLiftinMotor, tuskWatcher, indexerLimit);
 
 }

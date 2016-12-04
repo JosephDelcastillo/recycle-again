@@ -3,11 +3,12 @@ package org.teamresistance.frc.subsystem.binliftin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.strongback.command.Command;
 import org.strongback.command.CommandTester;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
+import org.strongback.mock.MockSwitch;
 import org.teamresistance.frc.util.CommandUtilities;
-import org.teamresistance.frc.util.FakeBooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,12 +23,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @see LiftinIndexDownTest
  */
 class LiftinIndexUpTest {
-  private final FakeBooleanSupplier isAtTop = new FakeBooleanSupplier(false);
-  private final FakeBooleanSupplier hasIndexed = new FakeBooleanSupplier(false);
+  private final FakeTuskWatcher tuskWatcher = FakeTuskWatcher.atHome();
+  private final MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
   private final MockMotor motor = Mock.stoppedMotor();
 
-  private final BinLiftin binLiftin = new BinLiftin(motor, FakeTuskWatcher.atHome());
-  private final LiftinIndexUp liftinIndexUp = new LiftinIndexUp(binLiftin, isAtTop, hasIndexed);
+  private final BinLiftin binLiftin = new BinLiftin(motor, tuskWatcher, hasIndexedSwitch);
+  private final Command liftinIndexUp = new LiftinIndexUp(binLiftin);
 
   @Test
   void whenMotorRunning_interrupt_ShouldKillMotor() {
@@ -47,7 +48,7 @@ class LiftinIndexUpTest {
 
     @BeforeEach
     void pretendAtTop() {
-      isAtTop.setValue(true);
+      tuskWatcher.setAtTop();
       motor.setSpeed(1.0);
     }
 
@@ -71,7 +72,7 @@ class LiftinIndexUpTest {
 
     @BeforeEach
     void pretendInMiddle() {
-      isAtTop.setValue(false);
+      tuskWatcher.setInMiddle();
       motor.setSpeed(1.0);
     }
 
@@ -80,7 +81,7 @@ class LiftinIndexUpTest {
 
       @BeforeEach
       void setStillIndexing() {
-        hasIndexed.setValue(false);
+        hasIndexedSwitch.setNotTriggered();
       }
 
       @Test
@@ -103,7 +104,7 @@ class LiftinIndexUpTest {
 
       @BeforeEach
       void setHasIndexed() {
-        hasIndexed.setValue(true);
+        hasIndexedSwitch.setTriggered();
       }
 
       @Test

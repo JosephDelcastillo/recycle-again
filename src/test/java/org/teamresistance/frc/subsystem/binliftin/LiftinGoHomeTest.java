@@ -7,7 +7,6 @@ import org.strongback.command.CommandTester;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
 import org.teamresistance.frc.util.CommandUtilities;
-import org.teamresistance.frc.util.FakeBooleanSupplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,14 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Rothanak So
  * @see BinLiftinTest
- * @see LiftinIndexUpTest
+ * @see LiftinZeroTest
  */
 class LiftinGoHomeTest {
-  private final FakeBooleanSupplier isAtHome = new FakeBooleanSupplier(false);
+  private final FakeTuskWatcher tuskWatcher = FakeTuskWatcher.atHome();
   private final MockMotor motor = Mock.stoppedMotor();
 
-  private final BinLiftin binLiftin = new BinLiftin(motor, FakeTuskWatcher.atZero());
-  private final LiftinGoHome goHomeCommand = new LiftinGoHome(binLiftin, isAtHome);
+  private final BinLiftin binLiftin = new BinLiftin(motor, tuskWatcher, Mock.notTriggeredSwitch());
+  private final LiftinGoHome goHomeCommand = new LiftinGoHome(binLiftin);
 
   @Test
   void whenMotorRunning_Interrupt_ShouldKillMotor() {
@@ -39,7 +38,7 @@ class LiftinGoHomeTest {
 
     @BeforeEach
     void reachHome() {
-      isAtHome.setValue(true);
+      tuskWatcher.setAtHome();
       motor.setSpeed(1.0);
     }
 
@@ -63,7 +62,7 @@ class LiftinGoHomeTest {
 
     @BeforeEach
     void awayFromHome() {
-      isAtHome.setValue(false);
+      tuskWatcher.setInMiddle();
       motor.setSpeed(1.0);
     }
 

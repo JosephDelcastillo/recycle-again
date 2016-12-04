@@ -14,37 +14,35 @@ import org.strongback.command.Command;
  *
  * @author Rothanak So
  * @implNote Experimental: relies on the the {@link TuskWatcher} accurately tracking position.
- * @see BinLiftin#unsafeZeroFromAhead()
- * @see BinLiftin#unsafeZeroFromBehind()
+ * @see BinLiftin#zeroFromAhead()
+ * @see BinLiftin#zeroFromBehind()
  * @see BinLiftin#hold()
  */
 @Experimental
-class LiftinZero extends Command {
+public class LiftinZero extends Command {
   private final BinLiftin binLiftin;
-  private final TuskWatcher tuskWatcher;
 
-  LiftinZero(BinLiftin binLiftin, TuskWatcher tuskWatcher) {
+  public LiftinZero(BinLiftin binLiftin) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.tuskWatcher = tuskWatcher;
   }
 
   @Override
   public boolean execute() {
-    int currentIndex = tuskWatcher.getCurrentIndex();
+    int currentIndex = binLiftin.getCurrentIndex();
 
     if (currentIndex == 0) {
       // At zero -> finish
       return true;
     } else if (currentIndex > 0) {
       // Tusks are out, so we're ahead of zero
-      binLiftin.unsafeZeroFromAhead();
-    } else if (currentIndex < 0) {
+      binLiftin.zeroFromAhead();
+      return false;
+    } else {
       // At home, so we're behind zero
-      binLiftin.unsafeZeroFromBehind();
+      binLiftin.zeroFromBehind();
+      return false;
     }
-
-    return false;
   }
 
   @Override

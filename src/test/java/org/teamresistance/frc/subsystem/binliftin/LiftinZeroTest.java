@@ -22,8 +22,8 @@ class LiftinZeroTest {
   private final FakeTuskWatcher tuskWatcher = FakeTuskWatcher.atHome();
   private final MockMotor motor = Mock.stoppedMotor();
 
-  private final BinLiftin binLiftin = new BinLiftin(motor, tuskWatcher);
-  private final LiftinZero zeroCommand = new LiftinZero(binLiftin, tuskWatcher);
+  private final BinLiftin binLiftin = new BinLiftin(motor, tuskWatcher, Mock.notTriggeredSwitch());
+  private final LiftinZero zeroCommand = new LiftinZero(binLiftin);
 
   @Test
   void whenMotorRunning_interrupt_ShouldKillMotor() {

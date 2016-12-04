@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.strongback.mock.Mock;
 import org.strongback.mock.MockMotor;
+import org.strongback.mock.MockSwitch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,43 +19,97 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class BinLiftinTest {
   private MockMotor motor = Mock.stoppedMotor();
+  private MockSwitch hasIndexedSwitch = Mock.notTriggeredSwitch();
   private FakeTuskWatcher liftinWatcher = FakeTuskWatcher.atZero();
-  private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher);
+  private BinLiftin binLiftin = new BinLiftin(motor, liftinWatcher, hasIndexedSwitch);
 
-  @Test
-  void unsafeIndexUp_ShouldMoveMotorForward() {
-    binLiftin.unsafeIndexUp();
-    assertThat(motor.getSpeed()).isPositive();
+  @Nested
+  class WhenAtZero {
+
+    @BeforeEach
+    void setAtZero() {
+      liftinWatcher.setAtZero();
+    }
+
+    @Test
+    void indexUp_ShouldMoveMotorForward() {
+      binLiftin.indexUp();
+      assertThat(motor.getSpeed()).isPositive();
+    }
+
+    @Test
+    void indexDown_ShouldMoveMotorBackward() {
+      binLiftin.indexDown();
+      assertThat(motor.getSpeed()).isNegative();
+    }
+
+    @Test
+    void goHome_ShouldMoveMotorBackward() {
+      binLiftin.goHome();
+      assertThat(motor.getSpeed()).isNegative();
+    }
+
+    @Test
+    void unload_ShouldMoveMotorBackward() {
+      binLiftin.unload();
+      assertThat(motor.getSpeed()).isNegative();
+    }
+
+    @Test
+    void zeroFromAhead_ShouldMoveMotorBackward() {
+      binLiftin.zeroFromAhead();
+      assertThat(motor.getSpeed()).isNegative();
+    }
+
+    @Test
+    void zeroFromBehind_ShouldMoveMotorForward() {
+      binLiftin.zeroFromBehind();
+      assertThat(motor.getSpeed()).isPositive();
+    }
   }
 
-  @Test
-  void unsafeIndexDown_ShouldMoveMotorBackward() {
-    binLiftin.unsafeIndexDown();
-    assertThat(motor.getSpeed()).isNegative();
+  @Nested
+  class WhenAtTop {
+
+    @BeforeEach
+    void setAtTop() {
+      liftinWatcher.setAtTop();
+      motor.setSpeed(1.0);
+    }
+
+    @Test
+    void indexUp_ShouldKillMotor() {
+      binLiftin.indexUp();
+      assertThat(motor.getSpeed()).isZero();
+    }
   }
 
-  @Test
-  void unsafeGoHome_ShouldMoveMotorBackward() {
-    binLiftin.unsafeGoHome();
-    assertThat(motor.getSpeed()).isNegative();
-  }
+  @Nested
+  class WhenAtHome {
 
-  @Test
-  void unsafeUnload_ShouldMoveMotorBackward() {
-    binLiftin.unsafeUnload();
-    assertThat(motor.getSpeed()).isNegative();
-  }
+    @BeforeEach
+    void setAtHome() {
+      liftinWatcher.setAtHome();
+      motor.setSpeed(-1.0);
+    }
 
-  @Test
-  void unsafeZeroFromAhead_ShouldMoveMotorBackward() {
-    binLiftin.unsafeZeroFromAhead();
-    assertThat(motor.getSpeed()).isNegative();
-  }
+    @Test
+    void indexDown_ShouldKillMotor() {
+      binLiftin.indexDown();
+      assertThat(motor.getSpeed()).isZero();
+    }
 
-  @Test
-  void unsafeZeroFromBehind_ShouldMoveMotorForward() {
-    binLiftin.unsafeZeroFromBehind();
-    assertThat(motor.getSpeed()).isPositive();
+    @Test
+    void goHome_ShouldKillMotor() {
+      binLiftin.goHome();
+      assertThat(motor.getSpeed()).isZero();
+    }
+
+    @Test
+    void unload_ShouldKillMotor() {
+      binLiftin.unload();
+      assertThat(motor.getSpeed()).isZero();
+    }
   }
 
   @Nested

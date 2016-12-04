@@ -2,8 +2,6 @@ package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
 
-import java.util.function.BooleanSupplier;
-
 /**
  * Also known as "pickup", this command will raise the {@link BinLiftin} exactly one unit.
  * Once done, it will hold the BinLiftin at the new index. If the BinLiftin is already at
@@ -15,25 +13,21 @@ import java.util.function.BooleanSupplier;
  * has finished. Spam the trigger as desired.
  *
  * @author Rothanak So
- * @see BinLiftin#unsafeIndexUp()
+ * @see BinLiftin#indexUp()
  * @see BinLiftin#hold()
  */
-class LiftinIndexUp extends Command {
+public class LiftinIndexUp extends Command {
   private final BinLiftin binLiftin;
-  private final BooleanSupplier isAtTop;
-  private final BooleanSupplier hasIndexed;
 
-  LiftinIndexUp(BinLiftin binLiftin, BooleanSupplier isAtTop, BooleanSupplier hasIndexed) {
+  public LiftinIndexUp(BinLiftin binLiftin) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.isAtTop = isAtTop;
-    this.hasIndexed = hasIndexed;
   }
 
   @Override
   public boolean execute() {
-    binLiftin.unsafeIndexUp();
-    return isAtTop.getAsBoolean() || hasIndexed.getAsBoolean();
+    binLiftin.indexUp();
+    return binLiftin.isAtTop() || binLiftin.hasIndexed();
   }
 
   @Override

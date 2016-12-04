@@ -2,8 +2,6 @@ package org.teamresistance.frc.subsystem.binliftin;
 
 import org.strongback.command.Command;
 
-import java.util.function.BooleanSupplier;
-
 /**
  * This command will tuck the {@link BinLiftin} back into its home position from wherever
  * it is. Once done, it will idle the motors. If the BinLiftin is already home, the command
@@ -14,23 +12,21 @@ import java.util.function.BooleanSupplier;
  *
  * @author Rothanak So
  * @implNote This command might actually be unnecessary if {@link LiftinZero} works.
- * @see BinLiftin#unsafeGoHome()
+ * @see BinLiftin#goHome()
  * @see BinLiftin#hold()
  */
-class LiftinGoHome extends Command {
+public class LiftinGoHome extends Command {
   private final BinLiftin binLiftin;
-  private final BooleanSupplier isAtHome;
 
-  LiftinGoHome(BinLiftin binLiftin, BooleanSupplier isAtHome) {
+  public LiftinGoHome(BinLiftin binLiftin) {
     super(binLiftin);
     this.binLiftin = binLiftin;
-    this.isAtHome = isAtHome;
   }
 
   @Override
   public boolean execute() {
-    binLiftin.unsafeGoHome();
-    return isAtHome.getAsBoolean();
+    binLiftin.goHome();
+    return binLiftin.isAtHome();
   }
 
   @Override
